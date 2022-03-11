@@ -1,3 +1,7 @@
+pub mod prelude;
+
+pub use crate::prelude::Direction;
+
 #[cfg(test)]
 mod tests {
     use quickcheck_macros::quickcheck;
