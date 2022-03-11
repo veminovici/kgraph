@@ -1,10 +1,5 @@
 use std::ops::Not;
 
-pub trait Indexer {
-    type Output;
-    fn to_index(&self) -> Self::Output;
-}
-
 #[derive(Copy, Debug, PartialEq, PartialOrd, Ord, Eq, Hash)]
 #[repr(usize)]
 pub enum Direction {
@@ -51,14 +46,6 @@ impl From<usize> for Direction {
     }
 }
 
-impl Indexer for Direction {
-    type Output = usize;
-
-    fn to_index(&self) -> Self::Output {
-        self.into()
-    }
-}
-
 impl Not for Direction {
     type Output = Direction;
 
@@ -72,7 +59,7 @@ impl Not for Direction {
 
 #[cfg(test)]
 mod tests {
-    use super::{Direction, Indexer};
+    use super::Direction;
 
     use quickcheck::Arbitrary;
     use quickcheck_macros::quickcheck;
@@ -122,13 +109,5 @@ mod tests {
     #[quickcheck]
     fn non_not_operator(d: Direction) -> bool {
         d == !(!d)
-    }
-
-    #[quickcheck]
-    fn indexer(d: Direction) -> bool {
-        let idx = d.to_index();
-        let u: usize = d.into();
-
-        idx == u
     }
 }
