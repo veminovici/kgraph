@@ -1,10 +1,21 @@
 use std::ops::Not;
 
+pub trait Indexer {
+    type Output;
+    fn to_index(&self) -> Self::Output;
+}
+
 #[derive(Copy, Debug, PartialEq, PartialOrd, Ord, Eq, Hash)]
 #[repr(usize)]
 pub enum Direction {
     Outgoing = 0,
     Incoming = 1,
+}
+
+impl Clone for Direction {
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 
 impl From<Direction> for bool {
@@ -28,9 +39,23 @@ impl From<Direction> for usize {
     }
 }
 
+impl From<&Direction> for usize {
+    fn from(d: &Direction) -> Self {
+        *d as usize
+    }
+}
+
 impl From<usize> for Direction {
     fn from(u: usize) -> Self {
         if u == 0 { Direction::Outgoing } else { Direction::Incoming }
+    }
+}
+
+impl Indexer for Direction {
+    type Output = usize;
+
+    fn to_index(&self) -> Self::Output {
+        self.into()
     }
 }
 
@@ -45,15 +70,9 @@ impl Not for Direction {
     }
 }
 
-impl Clone for Direction {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::Direction;
+    use super::{Direction, Indexer};
 
     use quickcheck::Arbitrary;
     use quickcheck_macros::quickcheck;
@@ -90,6 +109,12 @@ mod tests {
     }
 
     #[quickcheck]
+    fn ref_to_usize(d: Direction) -> bool {
+        let u: usize = (&d).into();
+        d == u.into()
+    }
+
+    #[quickcheck]
     fn not_operator(d: Direction) -> bool {
         d != !d
     }
@@ -97,5 +122,13 @@ mod tests {
     #[quickcheck]
     fn non_not_operator(d: Direction) -> bool {
         d == !(!d)
+    }
+
+    #[quickcheck]
+    fn indexer(d: Direction) -> bool {
+        let idx = d.to_index();
+        let u: usize = d.into();
+
+        idx == u
     }
 }

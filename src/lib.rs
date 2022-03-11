@@ -1,3 +1,3 @@
 pub mod prelude;
 
-pub use crate::prelude::Direction;
+pub use crate::prelude::Direction as EdgeDirection;
