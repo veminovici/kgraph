@@ -24,7 +24,11 @@ impl From<Direction> for bool {
 
 impl From<bool> for Direction {
     fn from(b: bool) -> Self {
-        if b { Direction::Incoming} else {Direction::Outgoing}
+        if b {
+            Direction::Incoming
+        } else {
+            Direction::Outgoing
+        }
     }
 }
 
@@ -42,7 +46,11 @@ impl From<&Direction> for usize {
 
 impl From<usize> for Direction {
     fn from(u: usize) -> Self {
-        if u == 0 { Direction::Outgoing } else { Direction::Incoming }
+        if u == 0 {
+            Direction::Outgoing
+        } else {
+            Direction::Incoming
+        }
     }
 }
 
@@ -66,8 +74,11 @@ mod tests {
 
     impl Arbitrary for Direction {
         fn arbitrary(g: &mut quickcheck::Gen) -> Self {
-            let x = i8::arbitrary(g);
-            if x % 2 == 0 { Direction::Outgoing } else { Direction:: Incoming }
+            if i8::arbitrary(g) % 2 == 0 {
+                Direction::Outgoing
+            } else {
+                Direction::Incoming
+            }
         }
     }
 
@@ -86,7 +97,11 @@ mod tests {
     #[quickcheck]
     fn from_usize(u: usize) -> bool {
         let d: Direction = u.into();
-        if u == 0 { u == d.into() } else { 1usize == d.into() }
+        if u == 0 {
+            u == d.into()
+        } else {
+            1usize == d.into()
+        }
     }
 
     #[quickcheck]
@@ -108,6 +123,6 @@ mod tests {
 
     #[quickcheck]
     fn non_not_operator(d: Direction) -> bool {
-        d == !(!d)
+        d == !!d
     }
 }
