@@ -22,6 +22,18 @@ impl From<bool> for Direction {
     }
 }
 
+impl From<Direction> for usize {
+    fn from(d: Direction) -> Self {
+        d as usize
+    }
+}
+
+impl From<usize> for Direction {
+    fn from(u: usize) -> Self {
+        if u == 0 { Direction::Outgoing } else { Direction::Incoming }
+    }
+}
+
 impl Not for Direction {
     type Output = Direction;
 
@@ -30,13 +42,6 @@ impl Not for Direction {
             Direction::Outgoing => Direction::Incoming,
             Direction::Incoming => Direction::Outgoing,
         }
-    }
-}
-
-impl Direction {
-    pub fn opposite(self) -> Self {
-        let b: bool = self.into();
-        (!b).into()
     }
 }
 
@@ -70,6 +75,18 @@ mod tests {
     fn to_bool(d: Direction) -> bool {
         let b: bool = d.into();
         d == b.into()
+    }
+
+    #[quickcheck]
+    fn from_usize(u: usize) -> bool {
+        let d: Direction = u.into();
+        if u == 0 { u == d.into() } else { 1usize == d.into() }
+    }
+
+    #[quickcheck]
+    fn to_usize(d: Direction) -> bool {
+        let u: usize = d.into();
+        d == u.into()
     }
 
     #[quickcheck]
