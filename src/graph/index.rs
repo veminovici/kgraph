@@ -1,5 +1,5 @@
 /// Defines the index functionality.
-pub trait Index: Ord + Sized {
+pub trait Index: PartialEq + Eq + PartialOrd + Ord + Sized {
     /// Constructs a new index from a specified value.
     fn new(x: usize) -> Self;
 
@@ -14,12 +14,12 @@ pub trait Index: Ord + Sized {
     fn index(&self) -> usize;
 
     /// Returns the minimum value of index.
-    fn undefined() -> Self;
+    fn zero() -> Self;
 
     /// Determines if a given index is the undifined value.
     #[inline(always)]
-    fn is_undefined(&self) -> bool {
-        self.index() == <Self as Index>::undefined().index()
+    fn is_zero(&self) -> bool {
+        *self == <Self as Index>::zero()
     }
 }
 
@@ -37,7 +37,7 @@ macro_rules! index_impl {
             }
 
             #[inline(always)]
-            fn undefined() -> Self {
+            fn zero() -> Self {
                 ::std::$name::MIN
             }
         }
@@ -56,13 +56,13 @@ mod tests {
 
     #[test]
     fn u8_undefined() {
-        let u = u8::undefined();
+        let u = u8::zero();
         assert_eq!(u, 0);
     }
 
     #[test]
     fn u8_is_undefined() {
-        let u = u8::undefined();
-        assert!(u.is_undefined());
+        let u = u8::zero();
+        assert!(u.is_zero());
     }
 }
