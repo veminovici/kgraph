@@ -55,14 +55,32 @@ mod tests {
     use super::Index;
 
     #[test]
-    fn u8_undefined() {
+    fn u8_zero() {
         let u = u8::zero();
         assert_eq!(u, 0);
     }
 
     #[test]
-    fn u8_is_undefined() {
+    fn u8_is_zero() {
         let u = u8::zero();
         assert!(u.is_zero());
+    }
+
+    #[test]
+    fn u8_new() {
+        let u = u8::new(10);
+        assert_eq!(u, 10);
+    }
+
+    #[test]
+    fn u8_next() {
+        let u = u8::new(10).next();
+        assert_eq!(u, 11);
+    }
+
+    #[test]
+    fn u8_index() {
+        let u = u8::new(10).index();
+        assert_eq!(u, 10);
     }
 }
