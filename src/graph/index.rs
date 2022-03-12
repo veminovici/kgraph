@@ -1,5 +1,7 @@
+use std::fmt::Debug;
+
 /// Defines the index functionality.
-pub trait Index: PartialEq + Eq + PartialOrd + Ord + Sized {
+pub trait Index: PartialEq + Eq + PartialOrd + Ord + Default + Debug + Sized {
     /// Constructs a new index from a specified value.
     fn new(x: usize) -> Self;
 
@@ -49,6 +51,52 @@ index_impl!(u16);
 index_impl!(u32);
 index_impl!(u64);
 index_impl!(u128);
+
+macro_rules! gindex_impl {
+    ($name:ident) => {
+        impl<Idx: Index> Index for $name<Idx> {
+            fn new(x: usize) -> Self {
+                Self(Idx::new(x))
+            }
+        
+            fn index(&self) -> usize {
+                self.0.index()
+            }
+        
+            fn zero() -> Self {
+                Self(Idx::zero())
+            }
+        }
+        
+        impl<Idx> From<Idx> for $name<Idx> {
+            fn from(idx: Idx) -> Self {
+                Self(idx)
+            }
+        }
+        
+        impl<Idx: std::fmt::Debug> std::fmt::Debug for $name<Idx> {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(f, "{:?}({:?})", stringify!($name), self.0)
+            }
+        }
+        
+        impl<Idx: Index> From<usize> for $name<Idx> {
+            fn from(x: usize) -> Self {
+                Self(Idx::new(x))
+            }
+        }
+    };
+}
+
+pub type DefaultIdx = u8;
+
+#[derive(Copy, Clone, Default, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct NodeIndex<Idx = DefaultIdx>(Idx);
+gindex_impl!(NodeIndex);
+
+#[derive(Copy, Clone, Default, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct EdgeIndex<Idx = DefaultIdx>(Idx);
+gindex_impl!(EdgeIndex);
 
 #[cfg(test)]
 mod tests {
